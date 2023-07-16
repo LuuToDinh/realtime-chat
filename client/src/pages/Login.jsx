@@ -51,7 +51,7 @@ function Login() {
                             Submit
                         </Button>
                         <Alert variant="danger">
-                            Has an occur: {loginState.email} {loginState.password}
+                            Has an occur: {loginState?.email} {loginState?.password}
                         </Alert>
                     </Stack>
                 </Col>

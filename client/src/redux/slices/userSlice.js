@@ -11,11 +11,12 @@ const userSlice = createSlice({
         info: {
             name: '',
             email: '',
-            password: '',
+            token: '',
+            id: '',
         },
     },
     reducers: {
-        getInfoRegisterUser(state, action) {
+        setInfoUser(state, action) {
             state.info = action.payload;
         },
     },

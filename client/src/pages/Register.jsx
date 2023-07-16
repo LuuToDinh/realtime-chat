@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Form, Row, Col, Stack, Button, Alert } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
+
 import { registerAccount } from '../redux/slices/userSlice';
 
 function Register() {
