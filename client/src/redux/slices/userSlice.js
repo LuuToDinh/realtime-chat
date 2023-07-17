@@ -37,11 +37,34 @@ const userSlice = createSlice({
                 state.status.info = 'idle';
                 state.info = action.payload.userInfo;
             });
+
+        builder
+            .addCase(loginAccount.pending, (state) => {
+                state.status.info = 'pending';
+            })
+            .addCase(loginAccount.fulfilled, (state, action) => {
+                if (action.payload.error) {
+                    state.status.info = 'error';
+                    state.status.errorMessage = action.payload.message;
+                    return;
+                }
+
+                localStorage.setItem('user', JSON.stringify(action.payload));
+
+                state.status.info = 'idle';
+                state.info = action.payload.userInfo;
+            });
     },
 });
 
 export const registerAccount = createAsyncThunk('user/registerAccount', async (registerInfo) => {
     const response = await postRequest(`${baseUrl}/user/register`, JSON.stringify(registerInfo));
+
+    return response;
+});
+
+export const loginAccount = createAsyncThunk('user/loginAccount', async (loginInfo) => {
+    const response = await postRequest(`${baseUrl}/user/login`, JSON.stringify(loginInfo));
 
     return response;
 });

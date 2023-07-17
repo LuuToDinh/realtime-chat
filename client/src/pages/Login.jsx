@@ -2,17 +2,21 @@ import { useState } from 'react';
 import { Form, Row, Col, Stack, Button, Alert } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { loginSlice } from '../redux/slices';
+import { loginAccount } from '../redux/slices/userSlice';
 
 function Login() {
+    const dispatch = useDispatch();
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const dispatch = useDispatch();
+    const userInfo = useSelector((state) => state.userInfo);
 
-    const hanleSubmitLogin = () => {
+    const hanleSubmitLogin = (e) => {
+        e.preventDefault();
+
         dispatch(
-            loginSlice.actions.getLoginInfo({
+            loginAccount({
                 email,
                 password,
             }),
@@ -21,10 +25,8 @@ function Login() {
         setPassword('');
     };
 
-    const loginState = useSelector((state) => state.loginInfo);
-
     return (
-        <Form>
+        <Form onSubmit={hanleSubmitLogin}>
             <Row
                 style={{
                     height: '100vh',
@@ -47,12 +49,12 @@ function Login() {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                         />
-                        <Button variant="primary" onClick={hanleSubmitLogin}>
-                            Submit
+                        <Button variant="primary" type="submit">
+                            {userInfo.status.info === 'pending' ? 'Đang gửi yêu cầu đăng nhập' : 'Đăng nhập'}
                         </Button>
-                        <Alert variant="danger">
-                            Has an occur: {loginState?.email} {loginState?.password}
-                        </Alert>
+                        {userInfo.status.info === 'error' && (
+                            <Alert variant="danger">{userInfo.status.errorMessage}</Alert>
+                        )}
                     </Stack>
                 </Col>
             </Row>
