@@ -80,6 +80,20 @@ class UserController {
             return res.status(500).json({ message: `Undefinded error of the server side: ${error}` });
         }
     }
+
+    async users(req, res) {
+        try {
+            const id = req.params.userId;
+            const user = await UserModel.find();
+            if (!user) {
+                return res.status(400).json(`Can not find any user has id: ${id}`);
+            }
+
+            return res.status(200).json(user);
+        } catch (error) {
+            return res.status(500).json({ message: `Undefinded error of the server side: ${error}` });
+        }
+    }
 }
 
 module.exports = new UserController();

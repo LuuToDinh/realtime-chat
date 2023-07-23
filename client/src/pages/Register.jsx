@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Form, Row, Col, Stack, Button, Alert } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
+import { Navigate } from 'react-router-dom';
 
 import { registerAccount } from '../redux/slices/userSlice';
+import { getUserChats } from '../redux/slices/chatSlice';
 
 function Register() {
     const [email, setEmail] = useState('');
@@ -27,6 +29,12 @@ function Register() {
         setEmail('');
         setPassword('');
     };
+
+    useEffect(() => {
+        if (userInfo?.info?._id) {
+            dispatch(getUserChats(userInfo.info));
+        }
+    }, [userInfo]);
 
     return (
         <Form onSubmit={hanleSubmitLogin}>
@@ -64,6 +72,7 @@ function Register() {
                         {userInfo.status.info === 'error' && (
                             <Alert variant="danger">{userInfo.status.errorMessage}</Alert>
                         )}
+                        {userInfo.status?.info === 'idle' && userInfo.info?.name && <Navigate to="/" replace={true} />}
                     </Stack>
                 </Col>
             </Row>

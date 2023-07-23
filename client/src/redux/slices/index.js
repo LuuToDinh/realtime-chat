@@ -1,2 +1,2 @@
 export { default as userSlice } from './userSlice';
-export { default as loginSlice } from './loginSlice';
+export { default as chatSlice } from './chatSlice';

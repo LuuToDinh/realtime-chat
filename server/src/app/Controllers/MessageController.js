@@ -21,7 +21,6 @@ class MessageController {
     }
 
     async getMessage(req, res) {
-        console.log('Ok');
         const chatId = req.params.chatId;
 
         try {

@@ -12,7 +12,7 @@ const userSlice = createSlice({
             name: '',
             email: '',
             token: '',
-            id: '',
+            _id: '',
         },
     },
     reducers: {
@@ -58,13 +58,13 @@ const userSlice = createSlice({
 });
 
 export const registerAccount = createAsyncThunk('user/registerAccount', async (registerInfo) => {
-    const response = await postRequest(`${baseUrl}/user/register`, JSON.stringify(registerInfo));
+    const response = await postRequest(`${baseUrl}/api/user/register`, JSON.stringify(registerInfo));
 
     return response;
 });
 
 export const loginAccount = createAsyncThunk('user/loginAccount', async (loginInfo) => {
-    const response = await postRequest(`${baseUrl}/user/login`, JSON.stringify(loginInfo));
+    const response = await postRequest(`${baseUrl}/api/user/login`, JSON.stringify(loginInfo));
 
     return response;
 });
