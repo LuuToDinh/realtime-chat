@@ -33,7 +33,7 @@ function PotentialUserChats() {
                     onClick={() => handleCreateUserChat(userInfo.info._id, user._id, index)}
                 >
                     {user.name}
-                    <span className="user-online"></span>
+                    <span className={userChats.info.onlineUsers?.some((user) => user?.userId === user._id ) && "user-online"}></span>
                 </div>
             ))}
         </div>

@@ -11,6 +11,7 @@ const chatSlice = createSlice({
         info: {
             userChats: [],
             potentialUserChats: [],
+            onlineUsers: [],
             currentChat: {},
         },
     },
@@ -18,6 +19,9 @@ const chatSlice = createSlice({
         updateCurrentChat: (state, action) => {
             state.info.currentChat = action.payload;
         },
+        updateOnlineUsers: (state, action) => {
+            state.info.onlineUsers = action.payload;
+        }
     },
     extraReducers: (builder) => {
         builder

@@ -1,11 +1,15 @@
 import PropTypes from 'prop-types';
 import { Stack } from 'react-bootstrap';
+import { useSelector } from 'react-redux';
 
 import useRecipient from '../../hooks/useRecipient';
 import avatar from '../../assets/imgs/avatar.svg';
 
 function UserChat({ chat, user }) {
+    const userChats = useSelector((state) => state.userChats);
     const { recipientUser } = useRecipient(chat, user);
+
+    const isOnline = userChats.info.onlineUsers?.some((user) => user?.userId === recipientUser?.at(0)?._id )
 
     return (
         <Stack
@@ -24,7 +28,7 @@ function UserChat({ chat, user }) {
             <div className="d-flex flex-column align-items-end">
                 <div className="date">12/12/2022</div>
                 <div className="this-user-notifications">2</div>
-                <span className="user-online"></span>
+                <span className={isOnline && "user-online"}></span>
             </div>
         </Stack>
     );

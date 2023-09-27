@@ -1,18 +1,24 @@
 import PropTypes from 'prop-types';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Stack } from 'react-bootstrap';
 import { useEffect, useState } from 'react';
 import moment from 'moment';
 import InputEmoji from 'react-input-emoji';
+import { io } from "socket.io-client"
 import { baseUrl, getRequest, postRequest } from '../../utils/httpRequests';
+import { chatSlice } from '../../redux/slices';
 
 function ChatBox({ messages, addMessage }) {
+    const dispatch = useDispatch();
+
     const userInfo = useSelector((state) => state.userInfo);
     const userChats = useSelector((state) => state.userChats);
     // const { recipientUser } = useRecipient(userChats.info.currentChat, userInfo.info);
     const [recipientUser, setRecipientUser] = useState(null);
     const [textMessage, setTextMessage] = useState('');
     const [newMessage, setNewMessage] = useState('');
+    const [socket, setSocket] = useState(null);
+    const [onlineUsers, setOnlineUsers] = useState(null);
 
     const recipientId = userChats.info.currentChat?.members?.find((id) => id !== userInfo.info?._id);
 
@@ -34,6 +40,52 @@ function ChatBox({ messages, addMessage }) {
         setTextMessage('');
         addMessage(response);
     };
+
+    useEffect(() => {
+        const newSocket = io("http://localhost:3000")
+        setSocket(newSocket);
+
+        return () => {
+            newSocket.disconnect()
+        }
+    }, [userInfo])
+    
+    // Add online users
+    useEffect(() => {
+        if(socket === null) return
+
+        socket.emit('addNewUser', userInfo.info?._id)
+        socket.on("getOnlineUsers", (res) => {
+            setOnlineUsers(res)
+
+            dispatch(chatSlice.actions.updateOnlineUsers(res))
+        })
+
+        return () => {
+            socket.off("getOnlineUsers")
+        }
+    }, [socket])
+    
+    // Send message
+    useEffect(() => {
+        if(socket === null) return
+
+        socket.emit('sendMessage', { ...newMessage, recipientId })
+    }, [newMessage])
+    
+    // Receive message
+    useEffect(() => {
+        if(socket === null) return
+        socket.on("getMessage", res => {
+            if(userChats.info.currentChat?._id !== res.chatId) return
+
+            addMessage(res)
+        })
+
+        return () => {
+            socket.off("getMessage")
+        }
+    }, [socket, userChats.info.currentChat])
 
     useEffect(() => {
         const getUser = async () => {
