@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import UserChat from '../components/UserChat/UserChat';
 import PotentialUserChats from '../components/UserChat/PotentialUserChat';
 import { chatSlice } from '../redux/slices';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { baseUrl, getRequest } from '../utils/httpRequests';
 import ChatBox from '../components/UserChat/ChatBox';
 
@@ -34,6 +34,11 @@ function Chat() {
         });
     };
 
+    // Change chat room when current chat is changed
+    useEffect(() => {
+        handleGetCurrentMessages(userChats?.info?.currentChat._id);
+    }, [userChats?.info?.currentChat])
+
     return (
         <Container>
             <PotentialUserChats />
@@ -47,10 +52,9 @@ function Chat() {
                                     key={index}
                                     onClick={() => {
                                         dispatch(chatSlice.actions.updateCurrentChat(chat));
-                                        handleGetCurrentMessages(chat._id);
                                     }}
                                 >
-                                    <UserChat chat={chat} user={userInfo.info} />
+                                    <UserChat chat={chat} user={userInfo.info} newMessage={messages} />
                                 </div>
                             );
                         })}

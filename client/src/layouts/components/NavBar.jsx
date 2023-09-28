@@ -2,6 +2,7 @@ import { Container, Stack, Navbar, Nav } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { userSlice } from '../../redux/slices';
+import Notification from '../../components/UserChat/Notification'
 
 function NavBar() {
     const dispatch = useDispatch();
@@ -24,6 +25,7 @@ function NavBar() {
                     <Stack direction="horizontal" gap={3}>
                         {userInfo?.name ? (
                             <>
+                                <Notification/>
                                 <Link to="/login" className="link-light" onClick={handleLogout}>
                                     Logout
                                 </Link>

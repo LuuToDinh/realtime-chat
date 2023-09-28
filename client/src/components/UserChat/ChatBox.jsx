@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import { useSelector, useDispatch } from 'react-redux';
 import { Stack } from 'react-bootstrap';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import moment from 'moment';
 import InputEmoji from 'react-input-emoji';
 import { io } from "socket.io-client"
@@ -13,12 +13,14 @@ function ChatBox({ messages, addMessage }) {
 
     const userInfo = useSelector((state) => state.userInfo);
     const userChats = useSelector((state) => state.userChats);
-    // const { recipientUser } = useRecipient(userChats.info.currentChat, userInfo.info);
+
     const [recipientUser, setRecipientUser] = useState(null);
     const [textMessage, setTextMessage] = useState('');
     const [newMessage, setNewMessage] = useState('');
     const [socket, setSocket] = useState(null);
     const [onlineUsers, setOnlineUsers] = useState(null);
+
+    const messageElement = useRef(null);
 
     const recipientId = userChats.info.currentChat?.members?.find((id) => id !== userInfo.info?._id);
 
@@ -40,6 +42,10 @@ function ChatBox({ messages, addMessage }) {
         setTextMessage('');
         addMessage(response);
     };
+
+    useEffect(() => {
+        messageElement.current?.scrollIntoView({ behavior: 'smooth', block: "end"  });
+    }, [messages])
 
     useEffect(() => {
         const newSocket = io("http://localhost:3000")
@@ -82,10 +88,22 @@ function ChatBox({ messages, addMessage }) {
             addMessage(res)
         })
 
+        socket.on("getNotification", res => {
+            const isChatOpening = userChats.info.currentChat?.members?.some(id => id === res.senderId)
+
+            if(isChatOpening) {
+                dispatch(chatSlice.actions.addNotification({ ...res, isRead: true }))
+            } else {
+                dispatch(chatSlice.actions.addNotification(res))
+            }
+        })
+
         return () => {
             socket.off("getMessage")
+            socket.off("getNotification")
         }
     }, [socket, userChats.info.currentChat])
+
 
     useEffect(() => {
         const getUser = async () => {
@@ -120,6 +138,7 @@ function ChatBox({ messages, addMessage }) {
                                     ? 'message self align-self-end flex-grow-0'
                                     : 'message align-self-start flex-grow-0'
                             }
+                            ref={messageElement}
                         >
                             <span>{message.text}</span>
                             <span className="message-footer">{moment(message.createAt).calendar()}</span>

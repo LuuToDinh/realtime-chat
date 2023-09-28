@@ -12,7 +12,9 @@ const chatSlice = createSlice({
             userChats: [],
             potentialUserChats: [],
             onlineUsers: [],
+            notifications: [],
             currentChat: {},
+            allUsers: [],
         },
     },
     reducers: {
@@ -21,6 +23,19 @@ const chatSlice = createSlice({
         },
         updateOnlineUsers: (state, action) => {
             state.info.onlineUsers = action.payload;
+        },
+        addNotification: (state, action) => {
+            state.info.notifications.push(action.payload);
+        },
+        updateNotifications: (state, action) => {
+            state.info.notifications = action.payload;
+        },
+        updateDesiredChatByNoti: (state, action) => {
+            state.info.currentChat = action.payload.chat;
+            state.info.notifications = action.payload.notifications;
+        },
+        getAllUsers: (state, action) => {
+            state.info.allUsers.push(action.payload) 
         }
     },
     extraReducers: (builder) => {
